@@ -15,6 +15,13 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.3.1] - 2026-10-25
+
+### Changed
+
+- Unbeamed stems in the one voice layout are shorter (3.5 staff spaces plus flag allowance); beamed groups unchanged
+- New skin key `stem_length_lone` (default 3.5)
+
 ## [0.3.0] - 2026-10-25
 
 ### Changed
