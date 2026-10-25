@@ -53,6 +53,15 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'Deploy dist from ${{ github.sha }}'
 
+      # jsDelivr caches branch URLs for up to 12 hours, so ask it to refetch the
+      # moving @dist files right away. Tag URLs are immutable and need no purge.
+      - name: Purge jsDelivr cache for the dist branch
+        continue-on-error: true
+        run: |
+          for f in drumdrom.js drumdrom.min.js BUILD.txt; do
+            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@dist/${f}" || true
+          done
+
       # The dist branch is rewritten on every push, so a release tag gets its own
       # immutable ref: .../drumdrom@dist-v0.1.0/drumdrom.min.js
       - name: Pin dist for release tags

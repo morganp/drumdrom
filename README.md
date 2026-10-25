@@ -108,7 +108,7 @@ A pattern with errors shows its error list in place of the diagram when `process
 <script type="drumdrom" data-style="staff"> ... </script>
 ```
 
-`@dist` is a moving ref that always serves the latest build of `main`. For a page you do not want to change under you, pin a release with the immutable ref `@dist-v0.4.1`:
+`@dist` is a moving ref that tracks the latest build of `main` (CI asks jsDelivr to refresh it after each deploy, but a CDN edge can lag for a while). For a page you do not want to change under you, pin a release with the immutable ref `@dist-v0.4.1`:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/morganp/drumdrom@dist-v0.4.1/drumdrom.min.js"></script>
