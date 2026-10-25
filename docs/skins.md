@@ -58,6 +58,7 @@ Staff metrics. Sizes marked sp are in staff spaces, so they scale with `staff_sp
 | --- | --- |
 | `staff_space` | pixels between two staff lines, default 9. Scales the whole staff |
 | `staff_line_w`, `ledger_w`, `stem_w`, `beam_w` | line widths and beam thickness (sp) |
+| `tie_w` | thickness of a tie at its middle (sp), default 0.2. Ties join sustained notes (open hat, crash, ride) in the one voice layout |
 | `stem_length_lone` | one voice only: stem length of an unbeamed note, from the centre of its highest head (sp), default 3.5. Flags raise it to 4.25 for a sixteenth and 5 for a thirty-second. Beamed stems ignore it |
 | `barline_w`, `final_barline_w`, `open_w` | barline widths and the open hat ring (sp) |
 | `slot_w` | width of one step at the finest grid used in a bar (sp) |

@@ -2,9 +2,8 @@ Third party notice: Bravura glyph outlines
 ==========================================
 
 lib/glyphs.js contains outline data for a small subset of glyphs (percussion
-clef, noteheads, flags, rests, accent, parentheses, augmentation dot, time signature
-digits)
-extracted from the Bravura music font by scripts/extract-glyphs.js.
+clef, noteheads, flags, rests, accent, parentheses, augmentation dot, time signature digits) extracted from the
+Bravura music font by scripts/extract-glyphs.js.
 
 Source:   https://github.com/steinbergmedia/bravura
 Version:  bravura-1.482 (font version 1.482)

@@ -16,7 +16,7 @@ module.exports = {
     bars_per_row: 2,
     staff_color: '#444444', ink_color: '#1a1a1a',
     staff_space: 9, staff_line_w: 0.13, ledger_w: 0.16, stem_w: 0.12, stem_length_lone: 3.5, beam_w: 0.5,
-    barline_w: 0.16, final_barline_w: 0.5, open_w: 0.14,
+    barline_w: 0.16, final_barline_w: 0.5, open_w: 0.14, tie_w: 0.2,
     slot_w: 3.4, beat_min_w: 8, lead_in: 1.6, lead_flam: 3, bar_clear: 0.6,
     feet_rests: true
   }
