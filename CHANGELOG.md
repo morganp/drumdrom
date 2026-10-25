@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Roadmap
 
-- Web editor (next)
+- Web editor (next, see `todo.md`)
 - Percussion staff renderer
 - MIDI export (General MIDI channel 10)
 - ASCII drum tab import and export

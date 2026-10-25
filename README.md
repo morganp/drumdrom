@@ -143,7 +143,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/skins.md](docs/skins.md).
 
 ## Roadmap
 
-Next: a web editor.
+Next: a web editor. See [todo.md](todo.md) for the plan.
 
 Later:
 
