@@ -57,6 +57,50 @@ const { ok, errors } = validate(source);               // all problems, never th
 
 `renderTree` returns the same drawing as an onml tree. Staff output needs `steps_per_beat` of 1, 2, 4 or 8; a triplet grid throws `E_STAFF_GRID`.
 
+## Drums and marks
+
+Each lane is one drum, named by its `id`. Order does not matter, drumdrom draws them in the conventional top to bottom order below. Every character of a `wave` is one step.
+
+| id | Drum | General MIDI |
+| --- | --- | --- |
+| `cr` | Crash | 49 |
+| `rd` | Ride | 51 |
+| `hh` | Closed hi-hat | 42 |
+| `ho` | Open hi-hat | 46 |
+| `hp` | Pedal hi-hat | 44 |
+| `sd` | Snare | 38 |
+| `rs` | Rimshot | 40 |
+| `cs` | Cross stick | 37 |
+| `t1` | Hi tom | 50 |
+| `t2` | Lo tom | 47 |
+| `t3` | Floor tom | 43 |
+| `bd` | Bass drum | 36 |
+
+| Mark | Meaning |
+| --- | --- |
+| `x` | normal hit |
+| `X` | accent (`>`) |
+| `o` | ghost note, softer, drawn in parentheses on the staff |
+| `O` | open hi-hat, on lane `hh` or `ho` |
+| `f` | flam, a grace note just before the hit |
+| `.` or `-` | rest |
+| `\|` | bar separator, every bar must have the same number of steps |
+
+```json5
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Marks',
+  lanes: [
+    { id: 'hh', wave: 'x.x.x.x.x.x.x.O.' },   // closed hats, open hat on the last "and"
+    { id: 'sd', wave: '..o.X..o..o.X...' },   // ghost notes and accented backbeats
+    { id: 'bd', wave: 'x.......f.......' }    // a flam on the kick
+  ]
+}
+```
+
+Need another drum, a different MIDI note or a different staff position? Add it in `kit`. The full table, including staff positions, is in [section 5 of the spec](docs/spec.md#5-default-kit).
+
 ## CLI
 
 ```
@@ -134,7 +178,6 @@ For development, `npm run build` writes the bundles to `dist/` and `examples/ind
 
 Wave alphabet: `.` `-` rest, `x` hit, `X` accent, `o` ghost, `O` open hi-hat (on `hh`), `f` flam, `|` bar separator. Reserved for later: `r` `b` `d` `^` `1`-`9`.
 
-Default kit, top to bottom on a chart: `cr` crash, `rd` ride, `hh` closed hat, `ho` open hat, `hp` pedal hat, `sd` snare, `rs` rimshot, `cs` cross stick, `t1` hi tom, `t2` lo tom, `t3` floor tom, `bd` bass drum.
 
 ## Examples
 

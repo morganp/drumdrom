@@ -209,7 +209,7 @@ Notes on the General MIDI mapping (General MIDI Level 1 percussion map, notes 35
 - `rs` Rimshot has no General MIDI note of its own. DrumDrom maps it to 40, "Electric Snare", which many drum kits treat as the second, harder or rimmed snare sound. If you want a rimshot to play the acoustic snare, give `rs` a different `gm` in the file `kit` map (for example `kit: { rs: { gm: 38 } }`). This is a convention choice, not part of General MIDI, and may be revisited.
 - `t1` Hi tom is 50 "High Tom". `t2` Lo tom is 47 "Low-Mid Tom". `t3` Floor tom is 43 "High Floor Tom" (41 is "Low Floor Tom"). GM numbers its toms 41, 43, 45, 47, 48, 50 from low to high, and a five-piece kit has no single canonical choice. The numbers above were written from knowledge of the General MIDI Level 1 specification and not checked against a copy of it. Uncertainty is highest for the toms and for `rs`.
 
-The staff positions are visual placement for the percussion staff renderer planned for a later version, not a statement about any notation standard.
+The staff positions are visual placement for the percussion staff renderer (section 13), not a statement about any notation standard.
 
 ## 6. The kit map
 
