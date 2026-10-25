@@ -61,7 +61,7 @@ const rules = {
 };
 
 module.exports = [
-  { ignores: ['dist/**', 'node_modules/**'] },
+  { ignores: ['dist/**', 'node_modules/**', 'lib/generated/**'] },
   {
     files: ['lib/**/*.js', 'bin/**/*.js', 'skins/**/*.js', 'scripts/**/*.js', 'eslint.config.js'],
     languageOptions: {

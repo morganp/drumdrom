@@ -1,6 +1,6 @@
 {
   "name": "drumdrom",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Drum patterns as JSON5, rendered to SVG percussion notation and lane charts",
   "license": "MIT",
   "author": "Morgan Prior",
@@ -23,20 +23,27 @@
     "node": ">=18"
   },
   "scripts": {
+    "build-validator": "node scripts/build-validator.js",
+    "prepare": "npm run build-validator",
+    "pretest": "npm run build",
     "test": "mocha test",
+    "prelint": "npm run build-validator",
     "lint": "eslint lib bin skins scripts test eslint.config.js",
-    "dist": "esbuild ./lib/drumdrom.js --bundle --format=iife --global-name=DrumDrom --outfile=dist/drumdrom.js",
-    "dist.min": "esbuild ./lib/drumdrom.js --bundle --format=iife --global-name=DrumDrom --minify --outfile=dist/drumdrom.min.js",
+    "prebuild": "npm run build-validator",
+    "predocs": "npm run build-validator",
+    "preupdate-snapshots": "npm run build-validator",
+    "dist": "esbuild ./lib/drumdrom.js --bundle --format=iife --global-name=DrumDrom --alias:json5=json5/lib/index.js --outfile=dist/drumdrom.js",
+    "dist.min": "esbuild ./lib/drumdrom.js --bundle --format=iife --global-name=DrumDrom --alias:json5=json5/lib/index.js --minify --outfile=dist/drumdrom.min.js",
     "build": "npm run dist && npm run dist.min",
     "docs": "node scripts/render-fixtures.js docs/images",
     "update-snapshots": "node scripts/render-fixtures.js test/snapshots"
   },
   "dependencies": {
-    "ajv": "^8.20.0",
     "json5": "^2.2.3",
     "onml": "^2.3.0"
   },
   "devDependencies": {
+    "ajv": "^8.20.0",
     "chai": "^6.3.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.13.0",
