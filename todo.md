@@ -26,6 +26,13 @@ Browser app to author drum patterns and see the lane chart update live. Modelled
 - [ ] Undo and redo
 - [ ] Optional audio preview (Web Audio) once the Metronome samples are reusable
 
+## Docs images stay current
+`npm run docs` already renders `docs/images` from the fixtures, but nothing forces it to run.
+
+- [ ] CI step: `npm run docs && git diff --exit-code docs/images test/snapshots`, so a stale image fails the build
+- [ ] Add "run `npm run docs` and `npm run update-snapshots`, commit the result" to the release steps in `CONTRIBUTING.md`
+- [ ] Fail `scripts/render-fixtures.js` on a README or `docs/` image reference that no fixture produces
+
 ## Other roadmap
 - [ ] Percussion staff renderer
 - [ ] MIDI export (General MIDI channel 10)
