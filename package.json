@@ -1,6 +1,6 @@
 {
   "name": "drumdrom",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Drum patterns as JSON5, rendered to SVG percussion notation and lane charts",
   "license": "MIT",
   "author": "Morgan Prior",

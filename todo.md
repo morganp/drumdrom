@@ -17,7 +17,8 @@ Engraved drum notation as SVG, matching what the Metronome app draws (Metronome/
 - [ ] Use the same renderer in the web editor preview
 - [ ] Triplet and swing grids (the staff renderer rejects steps_per_beat other than 1, 2, 4, 8 with E_STAFF_GRID)
 - [ ] Decide when `staff` becomes the default `--style`
-- [ ] Dotted notes and ties across beats, merged rests in compound meters (6/8 writes eighth rests per beat)
+- [x] Dotted notes, dotted rests and ties for sustained lanes, one voice (0.4.0)
+- [ ] Dotted and tied spelling for `voices: 2`, ties across the barline, merged half and whole rests, dotted half, tresillo dotted quarters across the half bar
 - [ ] Open hat as a circled x head option (`noteheadCircleX`) and half notehead for 2/2 and 1/1
 
 ## Web release (dist branch)

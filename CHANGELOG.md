@@ -15,6 +15,20 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.4.0] - 2026-10-25
+
+### Added
+
+- Dotted notes and dotted rests in the one voice staff layout, with Bravura augmentation dots
+- Ties for sustained lanes (open hat, crash, ride), drawn below the heads; new skin key `tie_w`
+- Broken beams for a sixteenth next to a dotted eighth
+- Fixtures `syncopated-dotted` and `open-hat-tie`
+
+### Changed
+
+- Spelling now crosses beat lines where standard: a bar is spelled whole for one voice in 2/4, 3/4, 4/4 and compound meters (6/8, 9/8, 12/8, 3/8). Other meters and `voices: 2` keep the per beat spelling
+- The six-eight fixture shows dotted quarters and a dotted quarter rest
+
 ## [0.3.1] - 2026-10-25
 
 ### Changed

@@ -122,6 +122,8 @@ Default kit, top to bottom on a chart: `cr` crash, `rd` ride, `hh` closed hat, `
 
 The staff is one voice by default: every stem points up and all notes that sound together share one stem, as in the Metronome app. Set `config: { voices: 2 }` for hands stems up and feet (bass drum, pedal hat) stems down as two voices.
 
+In one voice a bar is spelled whole: a hit that runs exactly to the next one is a dotted note (a dotted eighth and a sixteenth, a dotted quarter in 4/4 from beat 1 or 3, a dotted quarter beat in 6/8), silences get dotted rests where standard, and an open hat, crash or ride that rings past what one note can show is tied. Nothing crosses the half bar line of 4/4. Two voices keep the per beat spelling. The rules are in `docs/spec.md` section 13.
+
 Funk with ghost notes (parentheses on the snare, lighter hats), accents and kick and hat sharing stems (one voice, all stems up):
 
 ![Funk with ghost notes](docs/images/funk-ghost-staff.svg)
@@ -133,6 +135,12 @@ Open hi-hat disco groove (`O` on `hh` becomes a hit on the open hat lane):
 Six-eight with `time: [6, 8]` and `steps_per_beat: 2`, beamed in two groups of three:
 
 ![Six-eight groove](docs/images/six-eight-staff.svg)
+
+Dotted eighth and sixteenth figures, and an open hat or crash tied over a beat or half bar line:
+
+![Syncopated kick](docs/images/syncopated-dotted-staff.svg)
+
+![Open hat tie](docs/images/open-hat-tie-staff.svg)
 
 Two-bar fill with toms, a crash and a flam:
 
