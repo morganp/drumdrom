@@ -6,7 +6,7 @@ Words such as MUST and MUST NOT are used in the sense of RFC 2119.
 
 ## 1. Overview
 
-A DrumDrom file describes a drum pattern as text: a time signature, a step grid and one string of characters per kit lane (a "wave"), in the spirit of WaveDrom. The renderers turn the pattern into diagrams. Exports and a percussion staff renderer are planned (section 12), so the model already carries the data they need: General MIDI note numbers and staff positions.
+A DrumDrom file describes a drum pattern as text: a time signature, a step grid and one string of characters per kit lane (a "wave"), in the spirit of WaveDrom. The renderers turn the pattern into diagrams. The model carries General MIDI note numbers and staff positions, which the percussion staff renderer (section 13) and the planned exports (section 12) use.
 
 ## 2. File format
 
@@ -309,7 +309,7 @@ Rests produce no hit.
 | Key | Type | Meaning |
 | --- | --- | --- |
 | `skin` | string | Skin name: `default` or `dark`. An unknown name is an error. |
-| `bars_per_row` | integer 1 to 16 | Bars drawn per row of the lane chart. Default 2. |
+| `bars_per_row` | integer 1 to 16 | Bars drawn per row of the lane chart or the staff. Default 2. |
 | any skin key | number, string, boolean | Overrides that key of the skin for this diagram, for example `accent_color`. See `skins.md`. |
 
 The `skin` option of `renderSVG` and the `-s` option of the CLI take precedence over `config.skin`.
@@ -413,4 +413,20 @@ The following are reserved and rejected in version 1:
 - `sections` (named sections, repeats, per-section tempo or time changes).
 - Wave characters `r` (roll), `b` (buzz), `d` (drag), `^` (choke), and `1` to `9` (velocity digits).
 
-Planned consumers: percussion staff renderer, MIDI export (General MIDI channel 10), ASCII drum tab import and export, MusicXML (unpitched), LilyPond `drummode`, Hydrogen, triplet and swing grids, a web editor, and a Swift package. Groove reuse and templating are out of scope.
+Planned consumers: MIDI export (General MIDI channel 10), ASCII drum tab import and export, MusicXML (unpitched), LilyPond `drummode`, Hydrogen, triplet and swing grids, a web editor, and a Swift package. Groove reuse and templating are out of scope.
+
+## 13. Percussion staff rendering
+
+The renderers do not change the file format. This section records how the staff renderer (`renderStaff`, `drumdrom render --style staff`) reads the model, so that other renderers can agree. The default style stays the lane chart.
+
+**Staff and clef.** Five lines, a percussion clef, the time signature on the first row, a final barline after the last bar. Staff positions are half-spaces above the bottom line: 0 is the bottom line, 8 the top line, 9 the space above it, 10 the first ledger line above, and negative values lie below the staff. A lane's position is `lanes[].staff` of the model. Even positions beyond the staff get ledger lines.
+
+**Heads.** `head` selects the notehead: `normal` a filled oval, `x` a cross, `x_open` a cross with a small circle above, `diamond` a diamond. The default kit positions are bd 1, t3 3, sd 5, rs 5, cs 5 (cross), t2 6, t1 7, rd 8, hh 9, ho 9, cr 10 and hp -1.
+
+**Voices.** A lane whose `staff` is 1 or lower (bd, hp) is a foot lane and is written in the lower voice with stems down. All other lanes are hands, written in the upper voice with stems up. Hits of one voice at the same step share a stem. Each voice is spelled separately. A bar in which only one voice sounds is a single voice, and a bar with no hits is one whole rest. Rests that both voices share are merged.
+
+**Spelling.** Each beat is spelled on its own, and nothing crosses a beat line. Scanning the steps of the beat, a sounding step becomes a note as long as the beat grid and the next hit allow: the whole beat only when it starts on the beat and nothing sounds before the next beat, otherwise the longest power of two number of steps that starts on a multiple of its own length and ends before the next hit. Silence that a note cannot absorb becomes the largest aligned rests. A beat of 4 steps in x/4 therefore writes `x.x.` as two eighths and `x...` as a quarter, with no sixteenth rests in either. The written value of a step run follows from the time signature denominator and `steps_per_beat`: in 4/4 with 4 steps per beat a step is a sixteenth, in 6/8 with 2 steps per beat a step is a sixteenth and a beat an eighth. Staff output needs `steps_per_beat` of 1, 2, 4 or 8 with no step shorter than a 32nd; other grids (triplets) fail with `E_STAFF_GRID`.
+
+**Beams.** Adjacent notes that are shorter than a quarter are beamed within a beat, and within a group of three beats when the denominator is 8 and the beat count is a multiple of three (6/8, 9/8, 12/8). A rest or a quarter note ends a beam. A second beam joins neighbouring sixteenths, and a lone sixteenth gets a short stub. A lone note shorter than a quarter gets a flag. Beams are flat, and one beam height is shared by a whole voice in a bar.
+
+**Marks.** An accent (`X`) is a `>` above the beam for hands and below it for feet. A ghost (`o`) is parenthesised and a little smaller, except on the hi-hat lanes (hh, ho, hp), where it is smaller and lighter without parentheses. A flam (`f`) is a slashed grace note before the main head. Spacing is proportional to time and follows the finest grid actually used in the bar, and a bar is widened if needed so that a barline never touches the last note.

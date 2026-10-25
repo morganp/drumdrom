@@ -1,6 +1,6 @@
 # Skins
 
-A skin is a flat object of colours and metrics, in `skins/`. Two ship with drumdrom: `default` and `dark`. Select one with `config: { skin: 'dark' }` in a file, `renderSVG(source, { skin: 'dark' })`, or `drumdrom render -s dark`.
+A skin is a flat object of colours and metrics, in `skins/`. Two ship with drumdrom: `default` and `dark`. Select one with `config: { skin: 'dark' }` in a file, `renderSVG(source, { skin: 'dark' })`, or `drumdrom render -s dark`. The same skin drives the lane chart and the percussion staff; some keys belong to one of them.
 
 Any skin key can be overridden for a single diagram by putting it in `config`:
 
@@ -30,7 +30,9 @@ Colours:
 | `grid_color` | lane rules |
 | `beat_color` | beat lines |
 | `bar_color` | bar lines |
-| `mark_color`, `accent_color`, `ghost_color` | normal, accent and ghost marks |
+| `mark_color`, `accent_color`, `ghost_color` | normal, accent and ghost marks of the lane chart. `ghost_color` also colours ghost hi-hats on the staff |
+| `ink_color` | noteheads, stems, beams, rests, clef and barlines of the staff |
+| `staff_color` | the five staff lines and ledger lines |
 
 Metrics (pixels):
 
@@ -48,6 +50,19 @@ Metrics (pixels):
 | `grid_width`, `beat_width`, `bar_width` | line widths |
 | `margin_left`, `margin_right`, `margin_top`, `margin_bottom` | outer margins |
 | `title_gap`, `row_gap` | vertical gaps |
-| `bars_per_row` | bars per chart row, default 2 |
+| `bars_per_row` | bars per chart row, default 2 (lane chart and staff) |
+
+Staff metrics. Sizes marked sp are in staff spaces, so they scale with `staff_space`:
+
+| Key | Meaning |
+| --- | --- |
+| `staff_space` | pixels between two staff lines, default 9. Scales the whole staff |
+| `staff_line_w`, `ledger_w`, `stem_w`, `beam_w` | line widths and beam thickness (sp) |
+| `barline_w`, `final_barline_w`, `open_w` | barline widths and the open hat ring (sp) |
+| `slot_w` | width of one step at the finest grid used in a bar (sp) |
+| `beat_min_w` | narrowest beat (sp) |
+| `lead_in`, `lead_flam` | space from the start of a bar to the first note, and when a flam starts the bar (sp) |
+| `bar_clear` | smallest clear space between the last note and the closing barline (sp) |
+| `feet_rests` | `false` leaves out rests of the lower voice when both voices sound |
 
 A custom skin used from code is a plain object passed through `config` keys, or a new file in `skins/` added to `lib/all-skins.js`.

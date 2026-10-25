@@ -1,8 +1,8 @@
 # drumdrom
 
-Drum patterns as text. Write a groove in JSON5, get an SVG lane chart. Inspired by [WaveDrom](https://wavedrom.com) and the sibling project [fretdrom](https://github.com/morganp/fretdrom).
+Drum patterns as text. Write a groove in JSON5, get engraved percussion notation as SVG, or a WaveDrom style lane chart. Inspired by [WaveDrom](https://wavedrom.com) and the sibling project [fretdrom](https://github.com/morganp/fretdrom).
 
-![Rock backbeat](docs/images/rock-backbeat.svg)
+![Rock backbeat on a percussion staff](docs/images/rock-backbeat-staff.svg)
 
 ```json5 drumdrom
 {
@@ -21,6 +21,10 @@ Drum patterns as text. Write a groove in JSON5, get an SVG lane chart. Inspired 
 }
 ```
 
+The same pattern as a lane chart (`--style lanes`, the default for now):
+
+![Rock backbeat as a lane chart](docs/images/rock-backbeat-lanes.svg)
+
 One character per step, one lane per drum. `x` is a hit, `X` an accent, `o` a ghost note, `.` a rest. The format is described in [docs/spec.md](docs/spec.md) and checked by a [JSON Schema](schema/drumdrom.schema.json) plus semantic validation with located error messages.
 
 ## Install
@@ -36,30 +40,34 @@ Node 18 or newer. Until it is published, clone the repository and run `npm insta
 Save the example above as `backbeat.drumdrom` (or `.json5`), then:
 
 ```sh
-npx drumdrom render -i backbeat.drumdrom -o backbeat.svg
+npx drumdrom render -i backbeat.drumdrom --style staff -o backbeat.svg
 ```
 
 From code:
 
 ```js
-const { renderSVG, parse, validate } = require('drumdrom');
+const { renderStaff, renderLanes, renderSVG, parse, validate } = require('drumdrom');
 
-const svg = renderSVG(source, { skin: 'dark' }); // source: JSON5 text, object or model
-const model = parse(source);                     // normalised model, throws DrumDromError
-const { ok, errors } = validate(source);         // all problems, never throws
+const staff = renderStaff(source, { skin: 'dark' });   // percussion staff, source: JSON5 text, object or model
+const lanes = renderLanes(source);                     // lane chart
+const both = renderSVG(source, { style: 'both' });     // style: 'lanes' (default), 'staff' or 'both'
+const model = parse(source);                           // normalised model, throws DrumDromError
+const { ok, errors } = validate(source);               // all problems, never throws
 ```
+
+`renderTree` returns the same drawing as an onml tree. Staff output needs `steps_per_beat` of 1, 2, 4 or 8; a triplet grid throws `E_STAFF_GRID`.
 
 ## CLI
 
 ```
-drumdrom render [-i <file|->] [-o <out.svg>] [-s <skin>]
+drumdrom render [-i <file|->] [-o <out.svg>] [-s <skin>] [--style staff|lanes|both]
 drumdrom -i <file>                 shorthand for render
 drumdrom validate <file|->...      print every error with path, line and column
 drumdrom json [-i <file|->]        print the normalised model
 drumdrom --help | --version
 ```
 
-Input comes from stdin when `-i -` is given, or when no input is given and stdin is piped. Exit codes: 0 success, 1 invalid input or unreadable file, 2 usage error.
+`--style` picks the drawing: `lanes` (the default, as in 0.1.0), `staff` for percussion notation, or `both` to stack the staff above the lanes. Input comes from stdin when `-i -` is given, or when no input is given and stdin is piped. Exit codes: 0 success, 1 invalid input or unreadable file, 2 usage error.
 
 ```
 $ drumdrom validate groove.drumdrom
@@ -84,7 +92,13 @@ Build the bundle (`npm run build`, output in `dist/`) and include it. Every `<sc
 <script>DrumDrom.processAll();</script>
 ```
 
-A pattern with errors shows its error list in place of the diagram. See `examples/index.html`.
+A pattern with errors shows its error list in place of the diagram. The default drawing is the lane chart. Choose another with `data-style` on a script, or for all of them with `DrumDrom.processAll({ style: 'staff' })`:
+
+```html
+<script type="drumdrom" data-style="staff"> ... </script>
+```
+
+See `examples/index.html`.
 
 ## Format summary
 
@@ -106,27 +120,35 @@ Default kit, top to bottom on a chart: `cr` crash, `rd` ride, `hh` closed hat, `
 
 ## Examples
 
-Funk with ghost notes:
+Funk with ghost notes (parentheses on the snare, lighter hats), accents and two voices:
 
-![Funk with ghost notes](docs/images/funk-ghost.svg)
+![Funk with ghost notes](docs/images/funk-ghost-staff.svg)
 
 Open hi-hat disco groove (`O` on `hh` becomes a hit on the open hat lane):
 
-![Disco open hat](docs/images/disco-open-hat.svg)
+![Disco open hat](docs/images/disco-open-hat-staff.svg)
 
-Six-eight with `time: [6, 8]` and `steps_per_beat: 2`:
+Six-eight with `time: [6, 8]` and `steps_per_beat: 2`, beamed in two groups of three:
 
-![Six-eight groove](docs/images/six-eight.svg)
+![Six-eight groove](docs/images/six-eight-staff.svg)
 
-Two-bar fill with toms and a flam:
+Two-bar fill with toms, a crash and a flam:
 
-![Two-bar tom fill](docs/images/tom-fill.svg)
+![Two-bar tom fill](docs/images/tom-fill-staff.svg)
 
-A custom kit lane:
+A custom kit lane (the staff position and head come from the `kit` map):
 
-![Custom kit lane](docs/images/custom-kit.svg)
+![Custom kit lane](docs/images/custom-kit-staff.svg)
 
-The images are rendered from `test/fixtures/*.json5` by `npm run docs`.
+An empty bar is a whole rest:
+
+![Bars of rests](docs/images/bar-rests-staff.svg)
+
+The lane chart of the fill, for comparison:
+
+![Two-bar tom fill as lanes](docs/images/tom-fill-lanes.svg)
+
+The images are rendered from `test/fixtures/*.json5` by `npm run docs`. The staff drawing uses glyph outlines from the Bravura music font (SIL OFL 1.1), see [NOTICE-BRAVURA.txt](NOTICE-BRAVURA.txt).
 
 ## Development
 
@@ -135,7 +157,7 @@ npm install
 npm test
 npm run lint
 npm run build            # dist/drumdrom.js and dist/drumdrom.min.js
-npm run docs             # regenerate docs/images
+npm run docs             # regenerate docs/images (staff and lanes)
 npm run update-snapshots # regenerate test/snapshots after an intended render change
 ```
 
@@ -147,7 +169,6 @@ Next: a web editor. See [todo.md](todo.md) for the plan.
 
 Later:
 
-- percussion staff renderer (the model already carries GM notes and staff positions)
 - MIDI export (General MIDI channel 10)
 - ASCII drum tab import and export
 - MusicXML export (unpitched)
@@ -160,4 +181,4 @@ Later:
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE). The glyph outlines in `lib/glyphs.js` come from Bravura and stay under the SIL Open Font License 1.1, see [NOTICE-BRAVURA.txt](NOTICE-BRAVURA.txt).
