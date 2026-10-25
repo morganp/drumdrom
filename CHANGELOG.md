@@ -15,6 +15,16 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.3.0] - 2026-10-25
+
+### Changed
+
+- BREAKING (pre-1.0) staff renderer defaults to one voice with all stems up and shared stems for simultaneous notes; `config.voices: 2` restores the two voice layout. With one voice a kick and a hat on the same step are two heads on one stem, rests are drawn only where no lane sounds, and heads a second apart (crash and hi-hat) are displaced to the right of the stem with a widened ledger line. `feet_rests` applies to two voices only.
+
+### Added
+
+- `config.voices` (1 or 2), validated by the schema and documented in spec sections 8 and 13.
+
 ## [0.2.1] - 2026-10-25
 
 ### Changed

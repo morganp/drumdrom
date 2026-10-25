@@ -12,6 +12,7 @@ Engraved drum notation as SVG, matching what the Metronome app draws (Metronome/
 - [x] Skins: default and dark, shared with the lane renderer
 - [x] CLI `render --style staff|lanes`, API `renderStaff`, fixtures and snapshots for both
 - [x] Replace the README images with staff output, keep one lane chart as the secondary view
+- [x] One voice layout (0.3.0): all stems up, one shared stem per step, `config.voices: 2` keeps the two voice layout
 - [ ] Use the same renderer in the web editor preview
 - [ ] Triplet and swing grids (the staff renderer rejects steps_per_beat other than 1, 2, 4, 8 with E_STAFF_GRID)
 - [ ] Decide when `staff` becomes the default `--style`
