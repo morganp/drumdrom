@@ -211,8 +211,31 @@ describe('renderStaff', function() {
     });
 
     it('can hide feet rests with the feet_rests skin key', function() {
-      const s = renderStaff(source({ config: { feet_rests: false }, lanes: [{ id: 'hh', wave: 'xxxxxxxxxxxxxxxx' }, { id: 'bd', wave: 'x...............' }] }));
+      const wave = [{ id: 'hh', wave: 'x...............' }, { id: 'bd', wave: 'xx..............' }];
+      expect(uses(renderStaff(source({ lanes: wave })), 'rest8th')).to.equal(1);
+      expect(uses(renderStaff(source({ config: { feet_rests: false }, lanes: wave })), 'rest8th')).to.equal(0);
+    });
+
+    it('leaves out feet rests under hand notes', function() {
+      const s = renderStaff(lanes(['hh', 'xxxxxxxxxxxxxxxx'], ['bd', 'x...............']));
       expect(uses(s, 'restQuarter')).to.equal(0);
+    });
+
+    it('leaves out hand rests under foot notes', function() {
+      const s = renderStaff(lanes(['sd', 'x...............'], ['bd', 'x...x...x...x...']));
+      expect(uses(s, 'restQuarter')).to.equal(0);
+    });
+
+    it('keeps a rest when the other voice is silent there', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'xx..............']));
+      expect(uses(s, 'rest8th')).to.equal(1);
+      expect(uses(s, 'restQuarter')).to.equal(3);
+    });
+
+    it('leaves out a long rest when the other voice starts a note inside it', function() {
+      const s = renderStaff(lanes(['hh', 'x....xxx........'], ['bd', 'x...............']));
+      expect(uses(s, 'rest16th')).to.equal(1);
+      expect(uses(s, 'restQuarter')).to.equal(2);
     });
   });
 

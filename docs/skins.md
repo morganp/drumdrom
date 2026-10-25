@@ -63,6 +63,6 @@ Staff metrics. Sizes marked sp are in staff spaces, so they scale with `staff_sp
 | `beat_min_w` | narrowest beat (sp) |
 | `lead_in`, `lead_flam` | space from the start of a bar to the first note, and when a flam starts the bar (sp) |
 | `bar_clear` | smallest clear space between the last note and the closing barline (sp) |
-| `feet_rests` | `false` leaves out rests of the lower voice when both voices sound |
+| `feet_rests` | `false` leaves out all rests of the lower voice when both voices sound (rests under a note of the other voice are always left out) |
 
 A custom skin used from code is a plain object passed through `config` keys, or a new file in `skins/` added to `lib/all-skins.js`.
