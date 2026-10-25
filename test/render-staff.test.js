@@ -15,6 +15,10 @@ function lanes(...rows) {
   return source({ lanes: rows.map(([id, wave]) => ({ id, wave })) });
 }
 
+function twoVoices(...rows) {
+  return source({ config: { voices: 2 }, lanes: rows.map(([id, wave]) => ({ id, wave })) });
+}
+
 describe('renderStaff', function() {
   describe('snapshots', function() {
     fixtureNames().forEach(name => {
@@ -181,16 +185,127 @@ describe('renderStaff', function() {
       expect(uses(s, 'articAccentAbove')).to.equal(1);
     });
 
-    it('puts a bass drum accent below', function() {
-      const s = renderStaff(lanes(['bd', 'X...............']));
+    it('puts a bass drum accent below in the two voices layout', function() {
+      const s = renderStaff(twoVoices(['bd', 'X...............']));
       expect(uses(s, 'articAccentBelow')).to.equal(1);
       expect(uses(s, 'articAccentAbove')).to.equal(0);
     });
   });
 
-  describe('voices', function() {
-    it('puts hands in one voice with stems up and feet in another with stems down', function() {
+  describe('one voice (default)', function() {
+    const stemsOf = s => (s.match(/<line x1="([\d.]+)" y1="([\d.-]+)" x2="[\d.]+" y2="([\d.-]+)" stroke="#1a1a1a" stroke-width="1.08"/g) || [])
+      .map(m => { const t = /x1="([\d.]+)" y1="([\d.-]+)" x2="[\d.]+" y2="([\d.-]+)"/.exec(m); return { x: Number(t[1]), y1: Number(t[2]), y2: Number(t[3]) }; });
+
+    it('is the default and draws one group per bar', function() {
       const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'x...............']));
+      expect(s).to.include('id="drumdrom-0-bar0"');
+      expect(s).to.not.include('-bar0-hands');
+      expect(s).to.not.include('-bar0-feet');
+    });
+
+    it('shares one up stem between a kick and a hat on the same step', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'x...............']));
+      const stems = stemsOf(s);
+      expect(stems).to.have.length(1);
+      expect(stems[0].y2).to.be.lessThan(stems[0].y1);
+      expect(uses(s, 'noteheadBlack')).to.equal(1);
+      expect(uses(s, 'noteheadXBlack')).to.equal(1);
+    });
+
+    it('starts the shared stem at the lowest head and ends above the highest', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'x...............']));
+      const stem = stemsOf(s)[0];
+      expect(stem.y1).to.be.greaterThan(18);
+      expect(stem.y2).to.be.lessThan(-4.5 - 3 * 9 + 0.1);
+    });
+
+    it('gives a kick alone its own up stem and a flag when unbeamed', function() {
+      const s = renderStaff(lanes(['bd', '..x.............']));
+      const stems = stemsOf(s);
+      expect(stems).to.have.length(1);
+      expect(stems[0].y2).to.be.lessThan(0);
+      expect(uses(s, 'flag8thUp')).to.equal(1);
+      expect(uses(s, 'flag8thDown')).to.equal(0);
+    });
+
+    it('displaces a head a second above another to the right of the stem', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['cr', 'x...............']));
+      expect(stemsOf(s)).to.have.length(1);
+      const xs = (s.match(/#drumdrom-0-g-noteheadXBlack" transform="translate\(([\d.]+)/g) || []).map(m => Number(/\(([\d.]+)/.exec(m)[1]));
+      expect(xs).to.have.length(2);
+      const stemX = stemsOf(s)[0].x;
+      expect(Math.min(...xs)).to.be.lessThan(stemX - 5);
+      expect(Math.max(...xs)).to.be.greaterThan(stemX - 1);
+    });
+
+    it('draws a ledger line wide enough for a displaced head', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['cr', 'x...............']));
+      const m = /<line x1="([\d.]+)" y1="-9" x2="([\d.]+)" y2="-9" stroke="#444444"/.exec(s);
+      expect(m).to.not.equal(null);
+      const head = (s.match(/#drumdrom-0-g-noteheadXBlack" transform="translate\(([\d.]+)/g) || []).map(h => Number(/\(([\d.]+)/.exec(h)[1]));
+      expect(Number(m[1])).to.be.at.most(Math.max(...head));
+      expect(Number(m[2])).to.be.at.least(Math.max(...head) + 10.4);
+    });
+
+    it('keeps a snare and a hat on one stem without displacing either', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['sd', 'x...............']));
+      const xs = (s.match(/#drumdrom-0-g-note[A-Za-z]+" transform="translate\(([\d.]+)/g) || []).map(m => Number(/\(([\d.]+)/.exec(m)[1]));
+      expect(Math.abs(xs[0] - xs[1])).to.be.lessThan(0.5);
+    });
+
+    it('draws rests only where no lane sounds', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'xx..............']));
+      expect(uses(s, 'rest8th')).to.equal(1);
+      expect(uses(s, 'restQuarter')).to.equal(3);
+      const gap = renderStaff(lanes(['hh', 'x.......x.......'], ['bd', '..x.......x.....']));
+      expect(uses(gap, 'restQuarter')).to.equal(2);
+      expect(uses(gap, 'rest8th')).to.equal(0);
+    });
+
+    it('ignores feet_rests', function() {
+      const wave = [{ id: 'hh', wave: 'x...............' }, { id: 'bd', wave: 'xx..............' }];
+      const on = renderStaff(source({ lanes: wave }));
+      const off = renderStaff(source({ config: { feet_rests: false }, lanes: wave }));
+      expect(off).to.equal(on);
+    });
+
+    it('beams kick and hat steps together as one group', function() {
+      const s = renderStaff(lanes(['hh', 'x.x.x.x.........'], ['bd', 'x...x...........']));
+      expect(count(s, /<rect x=/g)).to.equal(2);
+      expect(stemsOf(s)).to.have.length(4);
+      const beamY = /<rect x="[\d.]+" y="(-?[\d.]+)"/.exec(s)[1];
+      expect(stemsOf(s).every(st => String(st.y2) === beamY)).to.equal(true);
+    });
+
+    it('beams a kick-only step into the group with hats', function() {
+      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', '..x.............']));
+      expect(count(s, /<rect x=/g)).to.equal(1);
+      expect(uses(s, 'flag8thUp')).to.equal(0);
+    });
+
+    it('puts a bass drum accent above the beam', function() {
+      const s = renderStaff(lanes(['bd', 'X...............']));
+      expect(uses(s, 'articAccentAbove')).to.equal(1);
+      expect(uses(s, 'articAccentBelow')).to.equal(0);
+    });
+
+    it('draws a pedal hat head on the shared stem', function() {
+      const s = renderStaff(lanes(['hp', 'x...............']));
+      expect(stemsOf(s)[0].y2).to.be.lessThan(stemsOf(s)[0].y1);
+    });
+
+    it('accepts voices 1 and 2 and renders them differently', function() {
+      const wave = [{ id: 'hh', wave: 'x...............' }, { id: 'bd', wave: 'x...............' }];
+      const one = renderStaff(source({ config: { voices: 1 }, lanes: wave }));
+      const two = renderStaff(source({ config: { voices: 2 }, lanes: wave }));
+      expect(one).to.equal(renderStaff(source({ lanes: wave })));
+      expect(one).to.not.equal(two);
+    });
+  });
+
+  describe('two voices (voices: 2)', function() {
+    it('puts hands in one voice with stems up and feet in another with stems down', function() {
+      const s = renderStaff(twoVoices(['hh', 'x...............'], ['bd', 'x...............']));
       expect(s).to.include('id="drumdrom-0-bar0-hands"');
       expect(s).to.include('id="drumdrom-0-bar0-feet"');
       const stems = (s.match(/<line x1="([\d.]+)" y1="([\d.-]+)" x2="[\d.]+" y2="([\d.-]+)" stroke="#1a1a1a" stroke-width="1.08"/g) || [])
@@ -201,39 +316,39 @@ describe('renderStaff', function() {
     });
 
     it('draws no feet voice when no foot plays in the bar', function() {
-      const s = renderStaff(lanes(['hh', 'x...............']));
+      const s = renderStaff(twoVoices(['hh', 'x...............']));
       expect(s).to.not.include('-bar0-feet');
     });
 
     it('merges rests that both voices share', function() {
-      const s = renderStaff(lanes(['sd', 'x...............'], ['bd', 'x...............']));
+      const s = renderStaff(twoVoices(['sd', 'x...............'], ['bd', 'x...............']));
       expect(uses(s, 'restQuarter')).to.equal(3);
     });
 
     it('can hide feet rests with the feet_rests skin key', function() {
       const wave = [{ id: 'hh', wave: 'x...............' }, { id: 'bd', wave: 'xx..............' }];
-      expect(uses(renderStaff(source({ lanes: wave })), 'rest8th')).to.equal(1);
-      expect(uses(renderStaff(source({ config: { feet_rests: false }, lanes: wave })), 'rest8th')).to.equal(0);
+      expect(uses(renderStaff(source({ config: { voices: 2 }, lanes: wave })), 'rest8th')).to.equal(1);
+      expect(uses(renderStaff(source({ config: { voices: 2, feet_rests: false }, lanes: wave })), 'rest8th')).to.equal(0);
     });
 
     it('leaves out feet rests under hand notes', function() {
-      const s = renderStaff(lanes(['hh', 'xxxxxxxxxxxxxxxx'], ['bd', 'x...............']));
+      const s = renderStaff(twoVoices(['hh', 'xxxxxxxxxxxxxxxx'], ['bd', 'x...............']));
       expect(uses(s, 'restQuarter')).to.equal(0);
     });
 
     it('leaves out hand rests under foot notes', function() {
-      const s = renderStaff(lanes(['sd', 'x...............'], ['bd', 'x...x...x...x...']));
+      const s = renderStaff(twoVoices(['sd', 'x...............'], ['bd', 'x...x...x...x...']));
       expect(uses(s, 'restQuarter')).to.equal(0);
     });
 
     it('keeps a rest when the other voice is silent there', function() {
-      const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'xx..............']));
+      const s = renderStaff(twoVoices(['hh', 'x...............'], ['bd', 'xx..............']));
       expect(uses(s, 'rest8th')).to.equal(1);
       expect(uses(s, 'restQuarter')).to.equal(3);
     });
 
     it('leaves out a long rest when the other voice starts a note inside it', function() {
-      const s = renderStaff(lanes(['hh', 'x....xxx........'], ['bd', 'x...............']));
+      const s = renderStaff(twoVoices(['hh', 'x....xxx........'], ['bd', 'x...............']));
       expect(uses(s, 'rest16th')).to.equal(1);
       expect(uses(s, 'restQuarter')).to.equal(2);
     });
@@ -310,7 +425,7 @@ describe('renderStaff', function() {
     });
 
     it('leaves room above and below for stems, beams and accents', function() {
-      const s = renderStaff(lanes(['cr', 'X...............'], ['bd', 'X...............']));
+      const s = renderStaff(twoVoices(['cr', 'X...............'], ['bd', 'X...............']));
       const m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(s);
       expect(Number(m[2])).to.be.greaterThan(150);
     });

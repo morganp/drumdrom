@@ -53,6 +53,16 @@ describe('validate', function() {
     expect(validate(source({ lanes: [{ id: 'sd', wave: 'x...............', staff: 6 }] })).ok).to.equal(true);
   });
 
+  it('accepts config.voices 1 and 2 and rejects anything else', function() {
+    expect(validate(source({ config: { voices: 1 } })).ok).to.equal(true);
+    expect(validate(source({ config: { voices: 2 } })).ok).to.equal(true);
+    [3, 0, '1'].forEach(v => {
+      const r = validate(source({ config: { voices: v } }));
+      expect(r.ok).to.equal(false);
+      expect(r.errors[0]).to.include({ code: 'E_SCHEMA', path: 'config.voices' });
+    });
+  });
+
   it('gives each error a code, message and path', function() {
     validate(source({ time: [4, 3], lanes: [{ id: 'bd', wave: 'q' }] })).errors.forEach(e => {
       expect(e.code).to.be.a('string');
