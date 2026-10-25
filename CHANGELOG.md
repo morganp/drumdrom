@@ -15,6 +15,12 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.2.1] - 2026-10-25
+
+### Changed
+
+- Staff renderer no longer draws a rest in one voice under a note sounding in the other voice. A rest is left out when the other voice starts a note on any step it covers (spec section 13). Images and snapshots regenerated.
+
 ## [0.2.0] - 2026-10-25
 
 ### Added
