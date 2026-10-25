@@ -1,0 +1,13 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Open hat tie',
+  subtitle: 'The open hat rings over the beat line to the snare, bar two: a crash held over the half bar to the snare',
+  tempo: 100,
+  lanes: [
+    { id: 'cr', wave: '................|x...............' },
+    { id: 'hh', wave: 'x.O.....x.x.x.x.|................' },
+    { id: 'sd', wave: '........X.......|............X...' },
+    { id: 'bd', wave: 'x.......x.......|x...............' }
+  ]
+}

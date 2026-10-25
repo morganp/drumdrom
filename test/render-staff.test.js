@@ -459,6 +459,83 @@ describe('renderStaff', function() {
     });
   });
 
+  describe('dotted notes and ties', function() {
+    it('draws one augmentation dot after a dotted eighth and none after the sixteenth', function() {
+      const s = renderStaff(lanes(['bd', 'x..x............']));
+      expect(uses(s, 'augmentationDot')).to.equal(1);
+    });
+
+    it('beams a dotted eighth and a sixteenth with a broken second beam on the sixteenth', function() {
+      const s = renderStaff(lanes(['bd', 'x..x............']));
+      const rects = s.match(/<rect x="([\d.]+)" y="[-\d.]+" width="([\d.]+)"/g);
+      expect(rects).to.have.length(2);
+      const [, x0, w0] = /x="([\d.]+)".*width="([\d.]+)"/.exec(rects[0]);
+      const [, x1, w1] = /x="([\d.]+)".*width="([\d.]+)"/.exec(rects[1]);
+      // the stub ends where the beam ends, on the side of the dotted note
+      expect(Number(x1) + Number(w1)).to.be.closeTo(Number(x0) + Number(w0), 0.01);
+      expect(Number(w1)).to.be.lessThan(Number(w0) / 2);
+    });
+
+    it('puts the dot of a head on a line in the space above it', function() {
+      const dotY = s => Number(/href="#drumdrom-0-g-augmentationDot" transform="translate\([\d.]+ (-?[\d.]+)\)/.exec(s)[1]);
+      // snare (position 5, a space) sits on the centre of its space, ride (8, a line) half a space higher
+      const space = dotY(renderStaff(lanes(['sd', 'x.....x.........'])));
+      const line = dotY(renderStaff(lanes(['rd', 'x.....x.........'])));
+      expect(space).to.be.closeTo(9 * 1.5, 0.01);
+      expect(line).to.be.closeTo(-0.5 * 9, 0.01);
+    });
+
+    it('draws one dot per head position of a chord', function() {
+      const s = renderStaff(lanes(['hh', 'x..x............'], ['sd', 'x..x............'], ['bd', 'x...............']));
+      expect(uses(s, 'augmentationDot')).to.equal(3);
+    });
+
+    it('draws a dot after a dotted rest', function() {
+      const s = renderStaff(lanes(['bd', '...x............']));
+      expect(uses(s, 'rest8th')).to.equal(1);
+      expect(uses(s, 'augmentationDot')).to.equal(1);
+    });
+
+    it('draws a dotted quarter rest and note in 6/8', function() {
+      const s = renderStaff(lanes2([6, 8], 2, 'sd', '......x.....'));
+      expect(uses(s, 'restQuarter')).to.equal(1);
+      expect(uses(s, 'augmentationDot')).to.equal(2);
+    });
+
+    it('draws a tie below the heads of an open hat held over the beat line', function() {
+      const s = renderStaff(lanes(['hh', '..O.....x.......']));
+      const ties = s.match(/<path d="M[^"]*Q[^"]*Z"/g) || [];
+      expect(ties).to.have.length(1);
+      expect(uses(s, 'noteheadXBlack')).to.equal(3);
+    });
+
+    it('ties only the sustained head of a chord and writes the kick once', function() {
+      const s = renderStaff(lanes(['cr', 'x...........x...'], ['bd', 'x...........x...']));
+      expect(count(s, /<path d="M[^"]*Q[^"]*Z"/g)).to.equal(1);
+      expect(uses(s, 'noteheadBlack')).to.equal(1);
+      expect(uses(s, 'noteheadHalf')).to.equal(1);
+    });
+
+    it('does not draw ties for a lane that is not sustained', function() {
+      const s = renderStaff(lanes(['hh', '..x.....x.......']));
+      expect(count(s, /<path d="M[^"]*Q[^"]*Z"/g)).to.equal(0);
+    });
+
+    it('takes the tie thickness from the tie_w skin key', function() {
+      const area = w => {
+        const s = renderStaff(source({ config: { tie_w: w }, lanes: [{ id: 'hh', wave: '..O.....x.......' }] }));
+        return /<path d="M[\d. -]+Q[\d. -]+ [\d. -]+ [\d. -]+Q([\d.-]+) ([\d.-]+)/.exec(s)[2];
+      };
+      expect(area(0.4)).to.not.equal(area(0.1));
+    });
+
+    it('keeps two voices on the per beat spelling', function() {
+      const s = renderStaff(twoVoices(['bd', 'x..x............'], ['hh', '..O.....x.......']));
+      expect(uses(s, 'augmentationDot')).to.equal(0);
+      expect(count(s, /<path d="M[^"]*Q[^"]*Z"/g)).to.equal(0);
+    });
+  });
+
   describe('layout', function() {
     // content of the first bar in a one bar pattern, from the thin barline
     function clearance(s) {
@@ -474,11 +551,12 @@ describe('renderStaff', function() {
     }
 
     it('keeps the last note clear of the final barline', function() {
-      ['rock-backbeat', 'funk-ghost', 'disco-open-hat', 'six-eight'].forEach(name => {
+      ['rock-backbeat', 'funk-ghost', 'disco-open-hat', 'syncopated-dotted'].forEach(name => {
         expect(clearance(renderStaff(fixtureText(name))), name).to.be.greaterThan(0.4);
       });
       const lastFlag = renderStaff(lanes(['sd', '..............x.']));
       expect(clearance(lastFlag)).to.be.greaterThan(0.4);
+      expect(clearance(renderStaff(lanes2([6, 8], 2, 'sd', 'x.....x.....')))).to.be.greaterThan(0.4);
     });
 
     it('widens a bar rather than crowd a flagged note against the barline', function() {

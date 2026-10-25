@@ -1,0 +1,13 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Syncopated kick',
+  subtitle: 'Dotted eighth and sixteenth kick figure, dotted quarter and eighth in bar two',
+  tempo: 92,
+  time: [4, 4],
+  steps_per_beat: 4,
+  lanes: [
+    { id: 'sd', wave: '....X.......X...|........X.......' },
+    { id: 'bd', wave: 'x..x..x.x..x....|x.....x.....x...' }
+  ]
+}
