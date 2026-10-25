@@ -1,5 +1,19 @@
 # Todo
 
+## Percussion staff renderer (priority)
+Engraved drum notation as SVG, matching what the Metronome app draws (Metronome/Views/NotationDrawing.swift). The v0.1.0 lane chart is only the WaveDrom-style view; this is the notation view and should be the headline image in the README.
+
+- [ ] Port rhythm spelling from the app (`RhythmSpelling.swift`): longest aligned note value per beat, minimal rests, beam runs, no needless 16th rests
+- [ ] Staff layout: five lines, percussion clef, time signature, barlines, centring and clearance so a barline never touches the last note
+- [ ] Noteheads from the kit staff positions (bd 1, sd 5, hh 9 ...): x for hats, open-hat circle, filled heads, stems up for hands and down for feet, beams, flags, rests
+- [ ] Voices: hands up, feet down, as in the app
+- [ ] Accent (>) and ghost notes in parentheses (smaller, as in the app), flam grace note
+- [ ] Engraving quality: use real music glyphs (SMuFL, Bravura is OFL) as inline SVG paths rather than drawn shapes; check licence and size
+- [ ] Skins: default and dark, shared with the lane renderer
+- [ ] CLI `render --style staff|lanes`, API `renderStaff`, fixtures and snapshots for both
+- [ ] Replace the README images with staff output, keep one lane chart as the secondary view
+- [ ] Use the same renderer in the web editor preview
+
 ## Web release (dist branch)
 Goal: use drumdrom on any web page without cloning the repo. Copy fretdrom's release model: CI builds the bundles and force-pushes `dist/` to an orphan `dist` branch on every push to `main` and every `v*` tag, so pages can load `drumdrom.min.js` straight from GitHub. Reference: fretdrom `.github/workflows/deploy-dist.yml` (`peaceiris/actions-gh-pages@v4`, `publish_branch: dist`, `force_orphan: true`).
 
@@ -34,7 +48,6 @@ Browser app to author drum patterns and see the lane chart update live. Modelled
 - [ ] Fail `scripts/render-fixtures.js` on a README or `docs/` image reference that no fixture produces
 
 ## Other roadmap
-- [ ] Percussion staff renderer
 - [ ] MIDI export (General MIDI channel 10)
 - [ ] ASCII drum tab import and export
 - [ ] MusicXML (unpitched), LilyPond `drummode`, Hydrogen export
