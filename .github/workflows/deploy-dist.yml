@@ -1,0 +1,63 @@
+name: Deploy dist branch
+
+# Publishes the browser bundles to the orphan `dist` branch so a web page can
+# load them from GitHub without cloning the repo, for example through
+# https://cdn.jsdelivr.net/gh/morganp/drumdrom@dist/drumdrom.min.js
+#
+# This is NOT an npm release. There is no npm publish step in this repo's
+# workflows; releasing to npm is a deliberate manual `npm publish`.
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+# One deploy at a time, newest wins.
+concurrency:
+  group: deploy-dist
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+      - name: Stamp the build
+        run: |
+          {
+            echo "ref: ${GITHUB_REF_NAME}"
+            echo "commit: ${GITHUB_SHA}"
+            echo "version: $(node -p "require('./package.json').version")"
+          } > dist/BUILD.txt
+
+      - name: Deploy dist/ to dist branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: dist
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy dist from ${{ github.sha }}'
+
+      # The dist branch is rewritten on every push, so a release tag gets its own
+      # immutable ref: .../drumdrom@dist-v0.1.0/drumdrom.min.js
+      - name: Pin dist for release tags
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          git fetch origin dist
+          git tag -f "dist-${GITHUB_REF_NAME}" FETCH_HEAD
+          git push -f origin "dist-${GITHUB_REF_NAME}"

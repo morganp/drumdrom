@@ -1,7 +1,9 @@
 name: CI
 
+# Checks only. Nothing here publishes: no npm release, no dist branch.
 on:
   push:
+    branches: ['**']
   pull_request:
 
 jobs:
@@ -20,3 +22,18 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+  docs-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Docs images and snapshots match the fixtures
+        run: |
+          npm run docs
+          npm run update-snapshots
+          git diff --exit-code docs/images test/snapshots
