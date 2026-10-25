@@ -19,15 +19,17 @@ function lanes(...rows) {
 describe('renderSVG', function() {
   describe('snapshots', function() {
     fixtureNames().forEach(name => {
-      it(name + ' matches test/snapshots/' + name + '.svg (npm run update-snapshots)', function() {
-        const expected = fs.readFileSync(path.join(snapDir, name + '.svg'), 'utf8');
+      it(name + ' matches test/snapshots/' + name + '-lanes.svg (npm run update-snapshots)', function() {
+        const expected = fs.readFileSync(path.join(snapDir, name + '-lanes.svg'), 'utf8');
         expect(renderSVG(fixtureText(name)) + '\n').to.equal(expected);
       });
     });
 
     it('has a snapshot for every fixture and no extras', function() {
       const snaps = fs.readdirSync(snapDir).filter(f => f.endsWith('.svg')).map(f => f.replace('.svg', ''));
-      expect(snaps.sort()).to.deep.equal(fixtureNames());
+      const expected = [];
+      fixtureNames().forEach(n => expected.push(n + '-lanes', n + '-staff'));
+      expect(snaps.sort()).to.deep.equal(expected.sort());
     });
   });
 

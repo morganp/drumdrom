@@ -13,6 +13,11 @@ module.exports = {
     grid_width: 1, beat_width: 1, bar_width: 2,
     margin_left: 16, margin_right: 16, margin_top: 16, margin_bottom: 16,
     title_gap: 10, row_gap: 20,
-    bars_per_row: 2
+    bars_per_row: 2,
+    staff_color: '#444444', ink_color: '#1a1a1a',
+    staff_space: 9, staff_line_w: 0.13, ledger_w: 0.16, stem_w: 0.12, beam_w: 0.5,
+    barline_w: 0.16, final_barline_w: 0.5, open_w: 0.14,
+    slot_w: 3.4, beat_min_w: 8, lead_in: 1.6, lead_flam: 3, bar_clear: 0.6,
+    feet_rests: true
   }
 };

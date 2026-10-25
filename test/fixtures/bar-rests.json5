@@ -1,0 +1,11 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Bars of rests',
+  subtitle: 'An empty bar, a lone snare, then the snare on beat 1 only',
+  tempo: 90,
+  lanes: [
+    { id: 'sd', wave: '................|....x...........|x...............' },
+    { id: 'bd', wave: '................|................|................' }
+  ]
+}
