@@ -71,6 +71,39 @@ describe('cli', function() {
       expect(r.stderr).to.include('Unknown skin');
     });
 
+    it('renders lanes by default', function() {
+      const r = run(['render', '-i', fixture('rock-backbeat')]);
+      expect(r.stdout).to.include('Closed hi-hat');
+      expect(r.stdout).to.not.include('-g-noteheadXBlack');
+      expect(run(['render', '-i', fixture('rock-backbeat'), '--style', 'lanes']).stdout).to.equal(r.stdout);
+    });
+
+    it('renders the percussion staff with --style staff', function() {
+      const r = run(['render', '-i', fixture('rock-backbeat'), '--style', 'staff']);
+      expect(r.status).to.equal(0);
+      expect(r.stdout).to.include('-g-noteheadXBlack');
+      expect(r.stdout).to.not.include('>Closed hi-hat<');
+    });
+
+    it('stacks both styles with --style both', function() {
+      const r = run(['render', '-i', fixture('rock-backbeat'), '--style', 'both', '-s', 'dark']);
+      expect(r.status).to.equal(0);
+      expect(r.stdout).to.include('-g-noteheadXBlack');
+      expect(r.stdout).to.include('>Closed hi-hat<');
+    });
+
+    it('reports a grid the staff cannot write', function() {
+      const r = run(['render', '--style', 'staff', '-i', '-'], JSON.stringify(source({ steps_per_beat: 3, lanes: [{ id: 'bd', wave: 'x...........' }] })));
+      expect(r.status).to.equal(1);
+      expect(r.stderr).to.include('E_STAFF_GRID');
+    });
+
+    it('rejects an unknown style', function() {
+      const r = run(['render', '-i', fixture('rock-backbeat'), '--style', 'tab']);
+      expect(r.status).to.equal(2);
+      expect(r.stderr).to.include("Unknown style 'tab'");
+    });
+
     it('accepts the .drumdrom extension', function() {
       const f = path.join(tmp, 'a.drumdrom');
       fs.writeFileSync(f, fixtureText('rock-backbeat'));

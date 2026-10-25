@@ -7,8 +7,8 @@ const drumdrom = require('../lib');
 const { formatError } = require('../lib/errors');
 
 const USAGE = `Usage:
-  drumdrom render [-i <file|->] [-o <out.svg>] [-s <skin>]
-  drumdrom [-i <file|->] [-o <out.svg>] [-s <skin>]     (shorthand for render)
+  drumdrom render [-i <file|->] [-o <out.svg>] [-s <skin>] [--style <style>]
+  drumdrom [-i <file|->] [-o <out.svg>] [-s <skin>] [--style <style>]     (shorthand for render)
   drumdrom validate <file|->...
   drumdrom json [-i <file|->]
 
@@ -17,6 +17,7 @@ Options:
   -i, --input    input .drumdrom or .json5 file
   -o, --output   write to a file instead of stdout
   -s, --skin     skin name (${Object.keys(drumdrom.skins).join(', ')})
+  --style        lanes (default), staff, or both (staff above lanes)
   -h, --help     show this help
   -v, --version  show the version
 `;
@@ -36,8 +37,8 @@ function readInput(file) {
 }
 
 function parseArgs(args) {
-  const opts = { command: null, input: null, output: null, skin: null, files: [] };
-  const takes = { '--input': 'input', '-i': 'input', '--output': 'output', '-o': 'output', '--skin': 'skin', '-s': 'skin' };
+  const opts = { command: null, input: null, output: null, skin: null, style: null, files: [] };
+  const takes = { '--input': 'input', '-i': 'input', '--output': 'output', '-o': 'output', '--skin': 'skin', '-s': 'skin', '--style': 'style' };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === '--help' || a === '-h') {
@@ -113,7 +114,15 @@ function main() {
     if (opts.skin && !drumdrom.skins[opts.skin]) {
       fail("Unknown skin '" + opts.skin + "'; available: " + Object.keys(drumdrom.skins).join(', '), 2);
     }
-    write(opts, drumdrom.renderSVG(model, { skin: opts.skin || undefined }) + '\n');
+    if (opts.style && !drumdrom.styles.includes(opts.style)) {
+      fail("Unknown style '" + opts.style + "'; available: " + drumdrom.styles.join(', '), 2);
+    }
+    try {
+      write(opts, drumdrom.renderSVG(model, { skin: opts.skin || undefined, style: opts.style || undefined }) + '\n');
+    } catch (e) {
+      if (e.code !== 'E_STAFF_GRID') throw e;
+      fail(e.message + ' [' + e.code + ']');
+    }
   }
 }
 
