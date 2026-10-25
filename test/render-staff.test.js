@@ -223,9 +223,78 @@ describe('renderStaff', function() {
       const s = renderStaff(lanes(['bd', '..x.............']));
       const stems = stemsOf(s);
       expect(stems).to.have.length(1);
-      expect(stems[0].y2).to.be.lessThan(0);
+      expect(stems[0].y2).to.be.closeTo(0, 0.1);
       expect(uses(s, 'flag8thUp')).to.equal(1);
       expect(uses(s, 'flag8thDown')).to.equal(0);
+    });
+
+    describe('lone stems', function() {
+      // stem length in staff spaces from the centre of the highest head (staff position 1 is y 31.5 / 9 = 3.5)
+      const spaces = (y, pos) => (y - (4 - pos / 2) * 9) / -9;
+      const unitsOf = (rows, pos) => spaces(stemsOf(renderStaff(lanes(...rows)))[0].y2, pos);
+      const beamStem = renderStaff(lanes(['bd', 'x.x.............']));
+
+      it('ends a lone kick stem 3.5 spaces above the head, well below the beam height', function() {
+        const s = renderStaff(lanes(['bd', 'x...............']));
+        expect(unitsOf([['bd', 'x...............']], 1)).to.be.closeTo(3.5, 0.01);
+        expect(stemsOf(s)[0].y2).to.be.closeTo(0, 0.1);
+        expect(stemsOf(beamStem)[0].y2).to.be.lessThan(stemsOf(s)[0].y2);
+      });
+
+      it('gives a lone snare a 3.5 space stem', function() {
+        expect(unitsOf([['sd', '....x...........']], 5)).to.be.closeTo(3.5, 0.01);
+      });
+
+      it('measures the stem from the highest head of a chord', function() {
+        const s = renderStaff(lanes(['hh', 'x...............'], ['bd', 'x...............']));
+        expect(spaces(stemsOf(s)[0].y2, 9)).to.be.closeTo(3.5, 0.01);
+      });
+
+      it('leaves room for the flag of a lone eighth, sixteenth and thirty-second', function() {
+        const eighth = renderStaff(lanes(['sd', '..x.............']));
+        expect(spaces(stemsOf(eighth)[0].y2, 5)).to.be.closeTo(3.5, 0.01);
+        const sixteenth = renderStaff(lanes(['sd', '.x..............']));
+        expect(uses(sixteenth, 'flag16thUp')).to.equal(1);
+        expect(spaces(stemsOf(sixteenth)[0].y2, 5)).to.be.closeTo(4.25, 0.01);
+        const flag = require('../lib/glyphs').flag16thUp;
+        expect(spaces(stemsOf(sixteenth)[0].y2, 5)).to.be.at.least(flag.box[3]);
+      });
+
+      it('lengthens the stem with each further flag', function() {
+        const lengths = [4, 8].map(steps => {
+          const s = renderStaff(source({ time: [4, 4], steps_per_beat: steps, lanes: [{ id: 'sd', wave: '.x' + '.'.repeat(4 * steps - 2) }] }));
+          return spaces(stemsOf(s)[0].y2, 5);
+        });
+        expect(lengths[1] - lengths[0]).to.be.closeTo(0.75, 0.01);
+      });
+
+      it('clears a lone accent and ghost note', function() {
+        const accent = renderStaff(lanes(['sd', 'X...............']));
+        const stem = stemsOf(accent)[0];
+        const ay = /articAccentAbove" transform="translate\([\d.-]+ (-?[\d.]+)\)/.exec(accent)[1];
+        expect(Number(ay)).to.be.lessThan(stem.y2);
+        const ghost = renderStaff(lanes(['sd', 'o...............']));
+        expect(uses(ghost, 'noteheadParenthesisLeft')).to.equal(1);
+        expect(spaces(stemsOf(ghost)[0].y2, 5)).to.be.closeTo(3.5, 0.01);
+      });
+
+      it('takes the length from skin.stem_length_lone', function() {
+        const s = renderStaff(source({ config: { stem_length_lone: 5 }, lanes: [{ id: 'sd', wave: '....x...........' }] }));
+        expect(spaces(stemsOf(s)[0].y2, 5)).to.be.closeTo(5, 0.01);
+      });
+
+      it('leaves beamed stems at the beam height', function() {
+        const s = renderStaff(lanes(['bd', 'x.x.............']));
+        const beamY = /<rect x="[\d.]+" y="(-?[\d.]+)"/.exec(s)[1];
+        expect(stemsOf(s)).to.have.length(2);
+        expect(stemsOf(s).every(st => String(st.y2) === beamY)).to.equal(true);
+        expect(Number(beamY)).to.be.closeTo(-31.5, 0.1);
+      });
+
+      it('leaves the two voices layout unchanged for a lone note', function() {
+        const s = renderStaff(twoVoices(['sd', '....x...........']));
+        expect(stemsOf(s)[0].y2).to.be.closeTo(-31.5, 0.1);
+      });
     });
 
     it('displaces a head a second above another to the right of the stem', function() {
