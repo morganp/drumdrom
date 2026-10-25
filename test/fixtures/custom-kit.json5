@@ -1,0 +1,17 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Custom kit lane',
+  subtitle: 'A cowbell lane declared in the kit map, plus a renamed snare',
+  tempo: 104,
+  kit: {
+    cb: { name: 'Cowbell', gm: 56, staff: 11, head: 'diamond' },
+    sd: { name: 'Snare (piccolo)' }
+  },
+  lanes: [
+    { id: 'cb', wave: 'x...x...x...x.x.' },
+    { id: 'hh', wave: 'x.x.x.x.x.x.x.x.' },
+    { id: 'sd', wave: '....x.......x...' },
+    { id: 'bd', wave: 'x.....x.x.......' }
+  ]
+}

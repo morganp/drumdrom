@@ -1,0 +1,16 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Two-bar tom fill',
+  subtitle: 'Groove, then a fill around the toms into a crash',
+  tempo: 110,
+  lanes: [
+    { id: 'cr', wave: '................|x...............' },
+    { id: 'hh', wave: 'x.x.x.x.x.x.x.x.|x.x.............' },
+    { id: 'sd', wave: '....x.......x...|........f.x.....' },
+    { id: 't1', wave: '................|..........xx....' },
+    { id: 't2', wave: '................|............xx..' },
+    { id: 't3', wave: '................|..............xx' },
+    { id: 'bd', wave: 'x.......x.......|x...............' }
+  ]
+}

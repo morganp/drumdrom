@@ -1,0 +1,14 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Rock backbeat',
+  subtitle: 'Eighth-note hats, kick on 1 and 3, snare on 2 and 4',
+  tempo: 100,
+  time: [4, 4],
+  steps_per_beat: 4,
+  lanes: [
+    { id: 'hh', wave: 'x.x.x.x.x.x.x.x.' },
+    { id: 'sd', wave: '....x.......x...' },
+    { id: 'bd', wave: 'x.......x.......' }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Funk with ghost notes',
+  subtitle: 'Sixteenth hats with accents, ghost snare notes',
+  tempo: 96,
+  lanes: [
+    { id: 'hh', wave: 'XxxxXxxxXxxxXxxx' },
+    { id: 'sd', wave: '.o.oXo.o.oo.Xo.o' },
+    { id: 'bd', wave: 'x..x..x...x.....' }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Six-eight groove',
+  subtitle: '6/8 with two steps per eighth-note beat',
+  tempo: 120,
+  time: [6, 8],
+  steps_per_beat: 2,
+  lanes: [
+    { id: 'rd', wave: 'x.x.x.x.x.x.' },
+    { id: 'sd', wave: '......X.....' },
+    { id: 'bd', wave: 'x...x.......' }
+  ]
+}

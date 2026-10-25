@@ -1,0 +1,12 @@
+{
+  format: 'drumdrom',
+  version: 1,
+  name: 'Disco open hat',
+  subtitle: 'Four on the floor, open hat on every off-beat',
+  tempo: 120,
+  lanes: [
+    { id: 'hh', wave: 'x.O.x.O.x.O.x.O.' },
+    { id: 'sd', wave: '....X.......X...' },
+    { id: 'bd', wave: 'x...x...x...x...' }
+  ]
+}
