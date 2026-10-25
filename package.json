@@ -16,7 +16,8 @@
     "docs/",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE-BRAVURA.txt"
   ],
   "engines": {
     "node": ">=18"
