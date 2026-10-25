@@ -37,6 +37,22 @@ describe('validate', function() {
     expect(r.errors.map(e => [e.code, e.index])).to.deep.equal([['E_BAD_CHAR', 0], ['E_BAD_CHAR', 2], ['E_RESERVED_CHAR', 4]]);
   });
 
+  it('rejects the old lane key pitch as an unknown key and accepts staff', function() {
+    const text = [
+      '{',
+      "  format: 'drumdrom', version: 1,",
+      '  lanes: [',
+      "    { id: 'sd', wave: 'x...............', pitch: 6 }",
+      '  ]',
+      '}'
+    ].join('\n');
+    const r = validate(text);
+    expect(r.ok).to.equal(false);
+    expect(r.errors[0]).to.include({ code: 'E_SCHEMA', path: 'lanes[0].pitch', line: 4, column: 43 });
+    expect(r.errors[0].message).to.equal("unknown key 'pitch'");
+    expect(validate(source({ lanes: [{ id: 'sd', wave: 'x...............', staff: 6 }] })).ok).to.equal(true);
+  });
+
   it('gives each error a code, message and path', function() {
     validate(source({ time: [4, 3], lanes: [{ id: 'bd', wave: 'q' }] })).errors.forEach(e => {
       expect(e.code).to.be.a('string');

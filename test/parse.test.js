@@ -91,7 +91,7 @@ describe('parse', function() {
     });
 
     it('lets a lane override name and staff position', function() {
-      const m = parse(source({ lanes: [{ id: 'sd', wave: 'x...............', name: 'Piccolo', pitch: 6 }] }));
+      const m = parse(source({ lanes: [{ id: 'sd', wave: 'x...............', name: 'Piccolo', staff: 6 }] }));
       expect(lane(m, 'sd')).to.deep.include({ name: 'Piccolo', staff: 6 });
     });
 

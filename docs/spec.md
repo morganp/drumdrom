@@ -69,7 +69,7 @@ A lane object has these keys:
 | `id` | string | yes | A lane id from the default kit (section 5) or declared in `kit`. Lowercase letter first, then lowercase letters, digits or `_`, 16 characters at most. |
 | `wave` | string | yes | One character per step (section 4.1). |
 | `name` | string | no | Overrides the lane display name for this file. |
-| `pitch` | integer | no | Overrides the staff position (half-spaces above the bottom line, section 5) for this lane. |
+| `staff` | integer | no | Overrides the staff position (half-spaces above the bottom line, section 5) for this lane. |
 
 Lane ids MUST be unique within a file. All lanes MUST have the same number of steps. The order of lanes in a file does not matter: the normalised model and the renderers use the conventional kit order of section 5, with custom lanes last in file order.
 
@@ -291,7 +291,7 @@ Using a lane id that is in neither the default kit nor `kit` is an error.
 | `steps_per_beat`, `steps_per_bar` | Integers, default applied. |
 | `bars` | Number of bars, `steps / steps_per_bar`. |
 | `lanes` | Lanes in conventional kit order (section 5), custom lanes after in file order. Lanes with no hits are kept. |
-| `lanes[].id`, `name`, `gm`, `staff`, `head` | Resolved from the default kit, the `kit` map and the lane's own `name` and `pitch`. |
+| `lanes[].id`, `name`, `gm`, `staff`, `head` | Resolved from the default kit, the `kit` map and the lane's own `name` and `staff`. |
 | `lanes[].hits` | Sorted by `step`. |
 | `hits[].step` | Zero based step index across the whole pattern. |
 | `hits[].bar` | Zero based bar index. |

@@ -56,7 +56,7 @@
         "id": { "$ref": "#/$defs/id" },
         "wave": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "pitch": { "type": "integer", "minimum": -6, "maximum": 14 }
+        "staff": { "type": "integer", "minimum": -6, "maximum": 14 }
       }
     },
     "config": {

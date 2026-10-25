@@ -16,6 +16,12 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.2.0] - Unreleased
+
+### Changed
+
+- BREAKING (pre-1.0): lane field `pitch` renamed to `staff`, because `pitch` reads like a MIDI pitch (that is `gm`). The meaning is unchanged: the staff position in half-spaces above the bottom line. `pitch` is now rejected as an unknown lane key.
+
 ## [0.1.0] - 2026-10-25
 
 ### Added

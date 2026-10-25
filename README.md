@@ -96,7 +96,7 @@ A pattern with errors shows its error list in place of the diagram. See `example
 | `time` | `[beats, unit]`, default `[4, 4]` |
 | `steps_per_beat` | 1 to 12, default 4 (a beat is one unit of the time signature denominator) |
 | `kit` | custom lanes and overrides |
-| `lanes` | `{ id, wave, name?, pitch? }` |
+| `lanes` | `{ id, wave, name?, staff? }` |
 | `config` | skin, `bars_per_row` and skin overrides |
 | `sections` | reserved, rejected in version 1 |
 
