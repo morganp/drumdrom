@@ -15,6 +15,20 @@ All notable changes to this project are documented here. The format follows [Kee
 - Roll, buzz and drag
 - Swift package for the Metronome app
 
+## [0.4.1] - 2026-10-25
+
+### Changed
+
+- The browser bundle no longer includes ajv or compiles the schema at runtime. `lib/validate.js` uses a validator generated from `schema/drumdrom.schema.json` by ajv standalone code generation (`scripts/build-validator.js`), so the bundle works under a strict Content-Security-Policy and validation is unchanged. `dist/drumdrom.min.js` goes from 250,125 bytes (81,815 gzipped) to 126,899 bytes (42,154 gzipped)
+- ajv moved from dependencies to devDependencies; the generated `lib/generated/validate-schema.js` is git-ignored, built by `prepare`, `pretest`, `prelint` and `prebuild`, and shipped in the npm package
+- The dist scripts bundle json5's plain CommonJS build instead of its UMD browser build, which carried core-js shims
+
+### Added
+
+- README "HTML pages" section: CDN usage from jsDelivr (`@dist`, or the immutable `@dist-v0.4.1`), `renderSVG` and `processAll` examples
+- `examples/index.html` loads the hosted bundle by default and the local `../dist/drumdrom.js` with `?local`
+- Tests: the standalone validator agrees with a fresh ajv compile and is not stale, and the built bundles render and validate with code generation from strings disabled
+
 ## [0.4.0] - 2026-10-25
 
 ### Added

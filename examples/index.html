@@ -8,7 +8,7 @@
 </head>
 <body>
   <h1>DrumDrom demo</h1>
-  <p>Run <code>npm run build</code> first; this page uses <code>../dist/drumdrom.js</code>.</p>
+  <p>This page loads the hosted bundle from jsDelivr. To work offline or test local changes, run <code>npm run build</code> and open it with <code>?local</code> added to the URL.</p>
 
 <script type="drumdrom">
 {
@@ -38,7 +38,13 @@
 { format: 'drumdrom', version: 1, lanes: [{ id: 'sd', wave: 'x..z............' }] }
 </script>
 
-<script src="../dist/drumdrom.js"></script>
+<script>
+  // Hosted bundle by default. Add ?local to the URL to load ../dist/drumdrom.js
+  // instead (needs npm run build, works offline).
+  document.write('<script src="' + (/[?&]local\b/.test(location.search)
+    ? '../dist/drumdrom.js'
+    : 'https://cdn.jsdelivr.net/gh/morganp/drumdrom@dist/drumdrom.min.js') + '"><\/script>');
+</script>
 <script>DrumDrom.processAll();</script>
 </body>
 </html>

@@ -74,12 +74,12 @@ $ drumdrom validate groove.drumdrom
 groove.drumdrom: lanes[1].wave (line 7, column 31): lane 'sd': unknown character 'z' at index 3 in wave (allowed: . - x X o O f and '|') [E_BAD_CHAR]
 ```
 
-## Browser
+## HTML pages
 
-Build the bundle (`npm run build`, output in `dist/`) and include it. Every `<script type="drumdrom">` is replaced by an inline SVG when `DrumDrom.processAll()` runs:
+Load the hosted bundle from jsDelivr, no build and no install. Every `<script type="drumdrom">` is replaced by an inline SVG when `DrumDrom.processAll()` runs:
 
 ```html
-<script src="dist/drumdrom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/morganp/drumdrom@dist/drumdrom.min.js"></script>
 <script type="drumdrom">
 {
   format: 'drumdrom', version: 1,
@@ -92,13 +92,31 @@ Build the bundle (`npm run build`, output in `dist/`) and include it. Every `<sc
 <script>DrumDrom.processAll();</script>
 ```
 
-A pattern with errors shows its error list in place of the diagram. The default drawing is the lane chart. Choose another with `data-style` on a script, or for all of them with `DrumDrom.processAll({ style: 'staff' })`:
+Or render a pattern yourself. `renderSVG` takes JSON5 text, an object or a model and returns an SVG string; `validate` returns every error with path, line and column:
+
+```html
+<div id="groove"></div>
+<script>
+  const source = "{ format: 'drumdrom', version: 1, lanes: [{ id: 'bd', wave: 'x...x...x...x...' }] }";
+  document.getElementById('groove').innerHTML = DrumDrom.renderSVG(source, { style: 'staff' });
+</script>
+```
+
+A pattern with errors shows its error list in place of the diagram when `processAll` renders it. The default drawing is the lane chart. Choose another with `data-style` on a script, or for all of them with `DrumDrom.processAll({ style: 'staff' })`:
 
 ```html
 <script type="drumdrom" data-style="staff"> ... </script>
 ```
 
-See `examples/index.html`.
+`@dist` is a moving ref that always serves the latest build of `main`. For a page you do not want to change under you, pin a release with the immutable ref `@dist-v0.4.1`:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/morganp/drumdrom@dist-v0.4.1/drumdrom.min.js"></script>
+```
+
+The bundle does not compile anything at run time (no `eval`, no `new Function`; the schema validator is generated at build time), so it works under a strict Content-Security-Policy without `'unsafe-eval'`. It is 127 KB minified and 42 KB gzipped, down from 250 KB and 82 KB in 0.4.0, which bundled ajv. Validation is the same in the bundle and in Node.
+
+For development, `npm run build` writes the bundles to `dist/` and `examples/index.html` can load `../dist/drumdrom.js`. See `examples/index.html`.
 
 ## Format summary
 
@@ -166,7 +184,7 @@ The images are rendered from `test/fixtures/*.json5` by `npm run docs`. The staf
 npm install
 npm test
 npm run lint
-npm run build            # dist/drumdrom.js and dist/drumdrom.min.js
+npm run build            # dist/drumdrom.js and dist/drumdrom.min.js (also builds the schema validator)
 npm run docs             # regenerate docs/images (staff and lanes)
 npm run update-snapshots # regenerate test/snapshots after an intended render change
 ```

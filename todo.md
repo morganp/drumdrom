@@ -26,10 +26,10 @@ Goal: use drumdrom on any web page without cloning the repo. Copy fretdrom's rel
 
 - [x] `.github/workflows/deploy-dist.yml`: lint, test, build, publish `./dist` to the `dist` branch on push to `main` and `v*` tags (add `build-editor` once the web editor exists). No npm publish
 - [x] `dist/` is git-ignored and untracked
-- [ ] Decide the schema-free browser bundle first: the ajv build is about 207 KB and uses `new Function`, which breaks under strict CSP. The dist bundle should render without validation, with `validate` in the Node build
-- [ ] Serve path: pick jsDelivr `cdn.jsdelivr.net/gh/morganp/drumdrom@dist/drumdrom.min.js` (or a `v*` pinned ref) and test it from a plain HTML page
-- [ ] README "HTML pages" section with the script tag and a `drumdrom.render` snippet
-- [ ] `examples/index.html` loads the `dist` bundle by URL, as a check that the hosted bundle works
+- [x] Schema-free browser bundle (0.4.1): ajv standalone validator generated at build time, so the bundle has no ajv and no `new Function`, and still validates in full (127 KB, was 250 KB)
+- [x] Serve path: pick jsDelivr `cdn.jsdelivr.net/gh/morganp/drumdrom@dist/drumdrom.min.js` (or a `v*` pinned ref) and test it from a plain HTML page
+- [x] README "HTML pages" section with the script tag and a `drumdrom.render` snippet
+- [x] `examples/index.html` loads the `dist` bundle by URL, as a check that the hosted bundle works
 - [ ] npm publish stays manual (`npm publish` by hand, no workflow) until the format settles; decide with fretdrom, which also points at unpkg
 - [x] Release tags also create an immutable `dist-vX.Y.Z` tag pointing at that build
 - [ ] GitHub Pages for the editor and examples once built
@@ -37,7 +37,7 @@ Goal: use drumdrom on any web page without cloning the repo. Copy fretdrom's rel
 ## Web editor (next)
 Browser app to author drum patterns and see the lane chart update live. Modelled on fretdrom's `editor/` (static `editor/index.html` plus `editor/js/`, built by `npm run build-editor`, published by a CI workflow).
 
-- [ ] Decide bundle: schema-free browser build (the ajv bundle is about 207 KB and needs `new Function`, so it breaks under strict CSP)
+- [x] Decide bundle: schema-free browser build (0.4.1, ajv standalone validator, CSP safe)
 - [ ] Scaffold `editor/index.html`, `editor/js/`, `build-editor` script, deploy workflow
 - [ ] Text pane (JSON5) with live SVG preview and parse errors shown at line and column
 - [ ] Step grid editing: click a cell to place and cycle x, X, o, O, f, rest per lane
