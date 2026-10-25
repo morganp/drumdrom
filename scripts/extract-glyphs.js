@@ -27,7 +27,8 @@ const codepoints = {
   flag8thUp: 0xE240, flag8thDown: 0xE241, flag16thUp: 0xE242, flag16thDown: 0xE243,
   flag32ndUp: 0xE244, flag32ndDown: 0xE245,
   restWhole: 0xE4E3, restHalf: 0xE4E4, restQuarter: 0xE4E5, rest8th: 0xE4E6, rest16th: 0xE4E7, rest32nd: 0xE4E8,
-  articAccentAbove: 0xE4A0, articAccentBelow: 0xE4A1
+  articAccentAbove: 0xE4A0, articAccentBelow: 0xE4A1,
+  augmentationDot: 0xE1E7
 };
 for (let d = 0; d < 10; d++) codepoints['timeSig' + d] = 0xE080 + d;
 const names = Object.keys(codepoints);
