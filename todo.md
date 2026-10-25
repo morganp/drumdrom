@@ -1,5 +1,14 @@
 # Todo
 
+## Convergence with fretdrom and scores
+Decided 2026-10-25, full plan in fretdrom `todo.md` ("Convergence with drumdrom and scores"). Layered format: simplest syntax stays first class, timing, strict identification and score parts layer on top.
+
+- [ ] Make `format` and `version` optional (loosening, not breaking): a drum file can be just `lanes: [...]`; `format: 'drumdrom'` stays for strict validation. Inferred when a part appears inside a score
+- [ ] Optional `type: 'drums'` so the same body is a score part
+- [ ] Move onto `dromkit` (shared errors, locate, wave scan, loader, skins, svg helpers, browser glue, validator build) with byte identical snapshots
+- [ ] `layoutPart` API (onsets, min widths, `draw(xOf)`) for the lane chart, then the staff (`xOf` hook in `render-staff.js`)
+- [ ] Appear as a part inside `scoredrom` (`format: 'score'`, parts, shared tempo and time, bar aligned by fractional position)
+
 ## Percussion staff renderer (done in 0.2.0)
 Engraved drum notation as SVG, matching what the Metronome app draws (Metronome/Views/NotationDrawing.swift). The v0.1.0 lane chart is only the WaveDrom-style view; this is the notation view and should be the headline image in the README.
 
