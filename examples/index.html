@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DrumDrom demo</title>
+  <style>body { font-family: Helvetica, Arial, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; } .drumdrom-error { color: #b00020; }</style>
+</head>
+<body>
+  <h1>DrumDrom demo</h1>
+  <p>Run <code>npm run build</code> first; this page uses <code>../dist/drumdrom.js</code>.</p>
+
+<script type="drumdrom">
+{
+  format: 'drumdrom', version: 1,
+  name: 'Funk with ghost notes', tempo: 96,
+  lanes: [
+    { id: 'hh', wave: 'XxxxXxxxXxxxXxxx' },
+    { id: 'sd', wave: '.o.oXo.o.oo.Xo.o' },
+    { id: 'bd', wave: 'x..x..x...x.....' }
+  ]
+}
+</script>
+
+<script type="drumdrom">
+{
+  format: 'drumdrom', version: 1,
+  name: 'Disco open hat', config: { skin: 'dark' },
+  lanes: [
+    { id: 'hh', wave: 'x.O.x.O.x.O.x.O.' },
+    { id: 'sd', wave: '....X.......X...' },
+    { id: 'bd', wave: 'x...x...x...x...' }
+  ]
+}
+</script>
+
+<script type="drumdrom">
+{ format: 'drumdrom', version: 1, lanes: [{ id: 'sd', wave: 'x..z............' }] }
+</script>
+
+<script src="../dist/drumdrom.js"></script>
+<script>DrumDrom.processAll();</script>
+</body>
+</html>
