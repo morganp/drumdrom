@@ -63,7 +63,8 @@
       "type": "object",
       "properties": {
         "skin": { "type": "string" },
-        "bars_per_row": { "type": "integer", "minimum": 1, "maximum": 16 }
+        "bars_per_row": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "voices": { "enum": [1, 2] }
       },
       "additionalProperties": { "type": ["number", "string", "boolean"] }
     }

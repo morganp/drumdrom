@@ -111,7 +111,7 @@ See `examples/index.html`.
 | `steps_per_beat` | 1 to 12, default 4 (a beat is one unit of the time signature denominator) |
 | `kit` | custom lanes and overrides |
 | `lanes` | `{ id, wave, name?, staff? }` |
-| `config` | skin, `bars_per_row` and skin overrides |
+| `config` | skin, `bars_per_row`, `voices` (staff: 1 or 2) and skin overrides |
 | `sections` | reserved, rejected in version 1 |
 
 Wave alphabet: `.` `-` rest, `x` hit, `X` accent, `o` ghost, `O` open hi-hat (on `hh`), `f` flam, `|` bar separator. Reserved for later: `r` `b` `d` `^` `1`-`9`.
@@ -120,7 +120,9 @@ Default kit, top to bottom on a chart: `cr` crash, `rd` ride, `hh` closed hat, `
 
 ## Examples
 
-Funk with ghost notes (parentheses on the snare, lighter hats), accents and two voices:
+The staff is one voice by default: every stem points up and all notes that sound together share one stem, as in the Metronome app. Set `config: { voices: 2 }` for hands stems up and feet (bass drum, pedal hat) stems down as two voices.
+
+Funk with ghost notes (parentheses on the snare, lighter hats), accents and kick and hat sharing stems (one voice, all stems up):
 
 ![Funk with ghost notes](docs/images/funk-ghost-staff.svg)
 
